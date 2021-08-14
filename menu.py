@@ -33,7 +33,7 @@ class Menu(tk.Frame):
 
 		if tag in ['start', 'startrect']:
 			main.show_frame('ゲームフレーム')
-		if tag in ['howto', 'howtorect']:
+		elif tag in ['howto', 'howtorect']:
 			main.show_frame('あそびかたフレーム')
 		elif tag in ['quit', 'quitrect']:
 			self.getController().quit()
@@ -43,7 +43,7 @@ class Menu(tk.Frame):
 
 		if tag in ['start', 'startrect']:
 			event.widget.itemconfig('startrect', width = 5)
-		if tag in ['howto', 'howtorect']:
+		elif tag in ['howto', 'howtorect']:
 			event.widget.itemconfig('howtorect', width = 5)
 		elif tag in ['quit', 'quitrect']:
 			event.widget.itemconfig('quitrect', width = 5)
