@@ -1,5 +1,6 @@
 import tkinter as tk
 import main
+from decimal import Decimal, ROUND_HALF_UP
 
 class Game(tk.Frame):
 
@@ -10,12 +11,21 @@ class Game(tk.Frame):
 		tk.Frame.__init__(self, parent, width = self.WIDTH, height = self.HEIGHT)
 		self.pack_propagate(0)
 
+		self.reduction_ratio = 9  #縮小率
+		self.imagewidth = int(Decimal(str(712 / self.reduction_ratio)).quantize(Decimal('0'), rounding=ROUND_HALF_UP))
+		self.imageheight = int(Decimal(str(1008 / self.reduction_ratio)).quantize(Decimal('0'), rounding=ROUND_HALF_UP))
+
 		# 52枚のカードを生成
 		import deck
-		self.deckobj = deck.Deck()
+		self.deckobj = deck.Deck(self.imagewidth, self.imageheight)
 		self.deckobj.shuffleCards()
 		self.cards = self.deckobj.cards
-		self.imagewidth, self.imageheight = self.deckobj.imagewidth, self.deckobj.imageheight
+
+		import pyramidDeck
+		self.pyramiddeck = pyramidDeck.PyramidDeck(self.imagewidth, self.imageheight, self.WIDTH, self.HEIGHT)
+		for i in range(len(self.pyramiddeck.infos)):
+			self.pyramiddeck.addCard(self.cards[0])
+			self.cards.pop(0)
 
 		self.canvas = tk.Canvas(self, width = self.WIDTH, height = self.HEIGHT, bg = self.bgcolor)
 		self.canvas.pack()
@@ -55,17 +65,7 @@ class Game(tk.Frame):
 			event.widget.itemconfig('menurect', width = 5)
 
 	def paint(self):
-		self.canvas.create_image(50, 50, image = self.cards[0].getImage(), anchor = tk.NW, tags = 'image')
-		self.canvas.create_line(50, 50, 50, 50 + self.imageheight, fill = self.bgcolor, tags = 'imageline')
-		self.canvas.create_line(50, 50, 50 + self.imagewidth, 50, fill = self.bgcolor, tags = 'imageline')
-		self.canvas.create_line(50 + self.imagewidth, 50, 50 + self.imagewidth, 50 + self.imageheight, fill = self.bgcolor, tags = 'imageline')
-		self.canvas.create_line(50, 50 + self.imageheight, 50 + self.imagewidth, 50 + self.imageheight, fill = self.bgcolor, tags = 'imageline')
-
-		self.canvas.create_image(350, 350, image = self.cards[1].getImage(), anchor = tk.NW, tags = 'image2')
-		self.canvas.create_line(350, 350, 350, 350 + self.imageheight, fill = self.bgcolor, tags = 'image2line')
-		self.canvas.create_line(350, 350, 350 + self.imagewidth, 350, fill = self.bgcolor, tags = 'image2line')
-		self.canvas.create_line(350 + self.imagewidth, 350, 350 + self.imagewidth, 350 + self.imageheight, fill = self.bgcolor, tags = 'image2line')
-		self.canvas.create_line(350, 350 + self.imageheight, 350 + self.imagewidth, 350 + self.imageheight, fill = self.bgcolor, tags = 'image2line')
+		self.pyramiddeck.paint(self.canvas, self.bgcolor)
 
 		# 最初からボタン
 		self.canvas.create_rectangle(10, 635, 205, 685, fill = 'chocolate', outline = 'white', width = 1, tags = 'restartrect')

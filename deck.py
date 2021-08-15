@@ -1,15 +1,14 @@
+import tkinter as tk
 import random
-from decimal import Decimal, ROUND_HALF_UP
 from PIL import Image, ImageTk
 
 class Deck():
 
-	def __init__(self):
+	def __init__(self, imagewidth, imageheight):
 		self.cards = []
 		self.suits = ['diamond', 'club', 'heart', 'spade']
-		self.reduction_ratio = 10  #縮小率
-		self.imagewidth = int(Decimal(str(712 / self.reduction_ratio)).quantize(Decimal('0'), rounding=ROUND_HALF_UP))
-		self.imageheight = int(Decimal(str(1008 / self.reduction_ratio)).quantize(Decimal('0'), rounding=ROUND_HALF_UP))
+		self.imagewidth = imagewidth
+		self.imageheight = imageheight
 
 		import card
 		for suit in self.suits:
@@ -20,10 +19,24 @@ class Deck():
 					suit = suit,
 					num = num,
 					state = 0,
+					tags = suit + str(num),
 					image = img
 				)
 				self.cards.append(obj)
 
 	def shuffleCards(self):
 		random.shuffle(self.cards)
+
+	# def paint(self, canvas, cardslist, bgcolor):
+		# canvas.create_image(50, 50, image = cardslist[0].getImage(), anchor = tk.NW, tags = cardslist[0].getTags())
+		# canvas.create_line(50, 50, 50, 50 + self.imageheight, fill = bgcolor, tags = cardslist[0].getTags() + 'line')
+		# canvas.create_line(50, 50, 50 + self.imagewidth, 50, fill = bgcolor, tags = cardslist[0].getTags() + 'line')
+		# canvas.create_line(50 + self.imagewidth, 50, 50 + self.imagewidth, 50 + self.imageheight, fill = bgcolor, tags = cardslist[0].getTags() + 'line')
+		# canvas.create_line(50, 50 + self.imageheight, 50 + self.imagewidth, 50 + self.imageheight, fill = bgcolor, tags = cardslist[0].getTags() + 'line')
+
+		# canvas.create_image(350, 350, image = cardslist[1].getImage(), anchor = tk.NW, tags = cardslist[1].getTags())
+		# canvas.create_line(350, 350, 350, 350 + self.imageheight, fill = bgcolor, tags = cardslist[1].getTags() + 'line')
+		# canvas.create_line(350, 350, 350 + self.imagewidth, 350, fill = bgcolor, tags = cardslist[1].getTags() + 'line')
+		# canvas.create_line(350 + self.imagewidth, 350, 350 + self.imagewidth, 350 + self.imageheight, fill = bgcolor, tags = cardslist[1].getTags() + 'line')
+		# canvas.create_line(350, 350 + self.imageheight, 350 + self.imagewidth, 350 + self.imageheight, fill = bgcolor, tags = cardslist[1].getTags() + 'line')
 		
