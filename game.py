@@ -17,7 +17,7 @@ class Game(tk.Frame):
 
 		# 52枚のカードを生成
 		import deck
-		self.deckobj = deck.Deck(self.imagewidth, self.imageheight)
+		self.deckobj = deck.Deck(self.imagewidth, self.imageheight, self.WIDTH)
 		self.deckobj.shuffleCards()
 		self.cards = self.deckobj.cards
 
@@ -66,21 +66,24 @@ class Game(tk.Frame):
 
 	def paint(self):
 		self.pyramiddeck.paint(self.canvas, self.bgcolor)
+		self.deckobj.paintJokers(self.canvas, self.bgcolor)
 
 		# 最初からボタン
-		self.canvas.create_rectangle(10, 635, 205, 685, fill = 'chocolate', outline = 'white', width = 1, tags = 'restartrect')
-		self.canvas.create_text(110, 660, fill = 'black', text = '最初から', font = ('Arial', 32), tags = 'restart')
+		self.canvas.create_rectangle(10, 640, 205, 690, fill = 'chocolate', outline = 'white', width = 1, tags = 'restartrect')
+		self.canvas.create_text(110, 665, fill = 'black', text = '最初から', font = ('Arial', 32), tags = 'restart')
 
 		# 遊びかたボタン
-		self.canvas.create_rectangle(220, 635, 415, 685, fill = 'chocolate', outline = 'white', width = 1, tags = 'howtorect')
-		self.canvas.create_text(320, 660, fill = 'black', text = '遊びかた', font = ('Arial', 32), tags = 'howto')
+		self.canvas.create_rectangle(220, 640, 415, 690, fill = 'chocolate', outline = 'white', width = 1, tags = 'howtorect')
+		self.canvas.create_text(320, 665, fill = 'black', text = '遊びかた', font = ('Arial', 32), tags = 'howto')
 
 		# メニューボタン
-		self.canvas.create_rectangle(430, 635, 625, 685, fill = 'chocolate', outline = 'white', width = 1, tags = 'menurect')
-		self.canvas.create_text(530, 660, fill = 'black', text = 'メニューへ', font = ('Arial', 32), tags = 'menu')
+		self.canvas.create_rectangle(430, 640, 625, 690, fill = 'chocolate', outline = 'white', width = 1, tags = 'menurect')
+		self.canvas.create_text(530, 665, fill = 'black', text = 'メニューへ', font = ('Arial', 32), tags = 'menu')
 
 		# マウスイベント
 		self.canvas.tag_bind('current', '<Enter>', self.mouseEnter)
-		self.canvas.tag_bind('current', '<Leave>', self.repaint)
+		self.canvas.tag_bind('restartrect', '<Leave>', self.repaint)
+		self.canvas.tag_bind('howtorect', '<Leave>', self.repaint)
+		self.canvas.tag_bind('menurect', '<Leave>', self.repaint)
 		self.canvas.tag_bind('current', '<ButtonPress-1>', self.mousePressed)
-		self.canvas.tag_bind('current', '<ButtonRelease-1>', self.repaint)
+		# self.canvas.tag_bind('current', '<ButtonRelease-1>', self.repaint)
