@@ -1,5 +1,6 @@
 import tkinter as tk
 import main
+from tkinter import messagebox
 from decimal import Decimal, ROUND_HALF_UP
 
 class Game(tk.Frame):
@@ -10,6 +11,12 @@ class Game(tk.Frame):
 		self.bgcolor = 'forestgreen'
 		tk.Frame.__init__(self, parent, width = self.WIDTH, height = self.HEIGHT)
 		self.pack_propagate(0)
+
+		# 選ばれたカードの情報を一時保存 index 0=数字, 1=キャンバスタグ
+		self.tempinfos = []
+
+		# 消化して非表示にするキャンバスタグを格納
+		self.hidetags = []
 
 		self.reduction_ratio = 9  #縮小率
 		self.imagewidth = int(Decimal(str(712 / self.reduction_ratio)).quantize(Decimal('0'), rounding=ROUND_HALF_UP))
@@ -59,8 +66,37 @@ class Game(tk.Frame):
 			main.show_frame('メニューフレーム')
 		elif tag == 'handcards':
 			self.handdeck.drawOneCard()
+			self.tempinfos.clear()
 			self.repaint()
 		else:
+			num = -1
+			if (num := self.deckobj.getNumWithTags(self.pyramiddeck.getCards(), tag)) != False:
+				pass
+			elif (num := self.deckobj.getNumWithTags(self.handdeck.getCards(), tag)) != False:
+				pass
+			elif (num := self.deckobj.getNumWithTags(self.handdeck.getTossCards(), tag)) != False:
+				pass
+			elif (num := self.deckobj.getNumWithTags(self.deckobj.getJokers(), tag)) != False:
+				pass
+
+			if len(self.tempinfos) == 0:
+				# 1枚目の選択
+				if num == 13:
+					self.hidetags.append(tag)
+				else:
+					self.tempinfos.append([num, tag])
+
+			elif len(self.tempinfos) == 1:
+				# 2枚目の選択
+				if num + self.tempinfos[0][0] == 13 or self.tempinfos[0][0] == 0 or num == 0:
+					self.hidetags.extend([tag, self.tempinfos[0][1]])
+
+				self.tempinfos.clear()
+
+			self.repaint()
+			if self.pyramiddeck.gameComplete() == True:
+				messagebox.showinfo('メッセージ', '成功です。')
+			self.repaint()
 			event.widget.itemconfig(tag + 'line', width = 3, fill = 'cyan')
 
 	def mouseEnter(self, event):
@@ -74,9 +110,9 @@ class Game(tk.Frame):
 			event.widget.itemconfig('menurect', width = 5)
 
 	def paint(self):
-		self.pyramiddeck.paint(self.canvas, self.bgcolor)
-		self.deckobj.paintJokers(self.canvas, self.bgcolor)
-		self.handdeck.paint(self.canvas, self.bgcolor)
+		self.pyramiddeck.paint(self.canvas, self.bgcolor, self.hidetags)
+		self.deckobj.paintJokers(self.canvas, self.bgcolor, self.hidetags)
+		self.handdeck.paint(self.canvas, self.bgcolor, self.hidetags)
 
 		# 最初からボタン
 		self.canvas.create_rectangle(10, 640, 205, 690, fill = 'chocolate', outline = 'white', width = 1, tags = 'restartrect')
@@ -96,4 +132,3 @@ class Game(tk.Frame):
 		self.canvas.tag_bind('howtorect', '<Leave>', self.repaint)
 		self.canvas.tag_bind('menurect', '<Leave>', self.repaint)
 		self.canvas.tag_bind('current', '<ButtonPress-1>', self.mousePressed)
-		# self.canvas.tag_bind('current', '<ButtonRelease-1>', self.repaint)

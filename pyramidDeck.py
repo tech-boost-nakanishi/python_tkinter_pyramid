@@ -48,11 +48,31 @@ class PyramidDeck():
 	def addCard(self, card):
 		self.cards.append(card)
 
-	def paint(self, canvas, bgcolor):
-		i = 0
+	def getCards(self):
+		return self.cards
+
+	def gameComplete(self):
+		count = 0
 		for card in self.cards:
 			if card.getState() == 2:
+				count += 1
+
+		if len(self.cards) == count:
+			return True
+
+		return False
+
+	def paint(self, canvas, bgcolor, hidetags):
+		i = 0
+		for card in self.cards:
+			if card.getTags() in hidetags:
+				card.setState(2)
+				i += 1
 				continue
+
+			if i <= 20:
+				if self.cards[self.infos[i][2]].getState() == 2 and self.cards[self.infos[i][3]].getState() == 2:
+					card.setState(1)
 
 			if i >= 21:
 				card.setState(1)
