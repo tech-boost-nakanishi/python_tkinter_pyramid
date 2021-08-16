@@ -23,8 +23,14 @@ class Game(tk.Frame):
 
 		import pyramidDeck
 		self.pyramiddeck = pyramidDeck.PyramidDeck(self.imagewidth, self.imageheight, self.WIDTH, self.HEIGHT)
-		for i in range(len(self.pyramiddeck.infos)):
+		for i in range(28):
 			self.pyramiddeck.addCard(self.cards[0])
+			self.cards.pop(0)
+
+		import handDeck
+		self.handdeck = handDeck.HandDeck(self.imagewidth, self.imageheight, self.WIDTH, self.HEIGHT)
+		for i in range(24):
+			self.handdeck.addCard(self.cards[0])
 			self.cards.pop(0)
 
 		self.canvas = tk.Canvas(self, width = self.WIDTH, height = self.HEIGHT, bg = self.bgcolor)
@@ -51,6 +57,9 @@ class Game(tk.Frame):
 			main.show_frame('あそびかたフレーム')
 		elif tag in ['menu', 'menurect']:
 			main.show_frame('メニューフレーム')
+		elif tag == 'handcards':
+			self.handdeck.drawOneCard()
+			self.repaint()
 		else:
 			event.widget.itemconfig(tag + 'line', width = 3, fill = 'cyan')
 
@@ -67,6 +76,7 @@ class Game(tk.Frame):
 	def paint(self):
 		self.pyramiddeck.paint(self.canvas, self.bgcolor)
 		self.deckobj.paintJokers(self.canvas, self.bgcolor)
+		self.handdeck.paint(self.canvas, self.bgcolor)
 
 		# 最初からボタン
 		self.canvas.create_rectangle(10, 640, 205, 690, fill = 'chocolate', outline = 'white', width = 1, tags = 'restartrect')
