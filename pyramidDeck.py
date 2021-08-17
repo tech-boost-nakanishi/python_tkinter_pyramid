@@ -63,13 +63,16 @@ class PyramidDeck():
 		return False
 
 	def paint(self, canvas, bgcolor, hidetags):
-		i = 0
 		for card in self.cards:
 			if card.getTags() in hidetags:
 				card.setState(2)
+
+		i = 0
+		for card in self.cards:
+			if card.getState() == 2:
 				i += 1
 				continue
-
+				
 			if i <= 20:
 				if self.cards[self.infos[i][2]].getState() == 2 and self.cards[self.infos[i][3]].getState() == 2:
 					card.setState(1)

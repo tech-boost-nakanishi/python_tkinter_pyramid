@@ -2,6 +2,8 @@ import tkinter as tk
 import main
 from tkinter import messagebox
 from decimal import Decimal, ROUND_HALF_UP
+import warnings
+warnings.simplefilter('ignore')
 
 class Game(tk.Frame):
 
@@ -79,6 +81,9 @@ class Game(tk.Frame):
 			elif (num := self.deckobj.getNumWithTags(self.deckobj.getJokers(), tag)) != False:
 				pass
 
+			if num == False:
+				return
+
 			if len(self.tempinfos) == 0:
 				# 1枚目の選択
 				if num == 13:
@@ -88,15 +93,17 @@ class Game(tk.Frame):
 
 			elif len(self.tempinfos) == 1:
 				# 2枚目の選択
-				if num + self.tempinfos[0][0] == 13 or self.tempinfos[0][0] == 0 or num == 0:
-					self.hidetags.extend([tag, self.tempinfos[0][1]])
-
-				self.tempinfos.clear()
+				if tag != self.tempinfos[0][1]:
+					if num + self.tempinfos[0][0] == 13 or self.tempinfos[0][0] == 14 or num == 14:
+						self.hidetags.extend([tag, self.tempinfos[0][1]])
+						self.tempinfos.clear()
+					else:
+						self.tempinfos.clear()
+						self.tempinfos.append([num, tag])
 
 			self.repaint()
 			if self.pyramiddeck.gameComplete() == True:
 				messagebox.showinfo('メッセージ', '成功です。')
-			self.repaint()
 			event.widget.itemconfig(tag + 'line', width = 3, fill = 'cyan')
 
 	def mouseEnter(self, event):
@@ -110,8 +117,13 @@ class Game(tk.Frame):
 			event.widget.itemconfig('menurect', width = 5)
 
 	def paint(self):
+		# ピラミッドデッキの描画
 		self.pyramiddeck.paint(self.canvas, self.bgcolor, self.hidetags)
+
+		# ジョーカーの描画
 		self.deckobj.paintJokers(self.canvas, self.bgcolor, self.hidetags)
+
+		# 手札の描画
 		self.handdeck.paint(self.canvas, self.bgcolor, self.hidetags)
 
 		# 最初からボタン

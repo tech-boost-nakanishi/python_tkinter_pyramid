@@ -39,7 +39,7 @@ class Deck():
 		for i in range(4):
 			obj = card.Card(
 				suit = 'joker',
-				num = 0,
+				num = 14,
 				state = 1,
 				tags = 'joker' + str(i + 1),
 				image = img
